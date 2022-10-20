@@ -10,7 +10,6 @@ class Core
     {
         //$this->getUrl();
         $url = $this->getUrl();
-
         if (file_exists('../app/controllers/' . ucwords($url[0]) . '.php')) {
             $this->currentController = ucwords($url[0]);
             unset($url[0]);
@@ -18,6 +17,20 @@ class Core
         require_once '../app/controllers/' . $this->currentController . '.php';
         $this->currentController = new $this->currentController;
         //$pages = new Pages();
+
+        //check for second word in url
+        if (isset($url[1])) {
+            if (method_exists($this->currentController, $url[1])) {
+                $this->currentMethod = $url[1];
+                unset($url[1]);
+            }
+        }
+
+        //get param
+        $this->param = $url ? array_values($url) : [];
+
+        //call a callbach with array of param
+        call_user_func_array([$this->currentController, $this->currentMethod], $this->param);
     }
 
     public function getUrl()
