@@ -1,7 +1,4 @@
-<script src="<?php echo URLROOT; ?>/js/main.js"></script>
-<script>
-    alert(1);
-</script>
+<script src="<?php echo URLROOT; ?>/public/js/main.js"></script>
 <p id="demo"></p>
 </body>
 
