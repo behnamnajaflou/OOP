@@ -10,6 +10,7 @@ class Pages extends Controller
     {
         $data = [
             'title' => 'Welcome',
+            'description' => 'VATICAN CITY (Reuters) - President French Emmanuel Macron and Pope Francis had nearly an hour of private talks, likely focusing on the war in Ukraine and the countrys prospects for peace.'
         ];
         $this->view('pages/index', $data);
     }
@@ -18,7 +19,7 @@ class Pages extends Controller
     {
         $data = [
             'title' => 'About Us',
-            'post' => 'Welcome Welcome Welcome Welcome to my site',
+            'description' => 'About us, we are the biggest co that you have seen - President French Emmanuel Macron and Pope Francis had nearly an hour of private talks, likely focusing on the war in Ukraine and the countrys prospects for peace.'
         ];
         $this->view('pages/about', $data);
     }
