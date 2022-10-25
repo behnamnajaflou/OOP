@@ -4,6 +4,7 @@ class Users extends Controller
 {
     public function __construct()
     {
+        $this->userModel = $this->model('User');
     }
 
 
@@ -32,6 +33,10 @@ class Users extends Controller
 
             if (empty($data['email'])) {
                 $data['email_err'] = 'Please enter your email';
+            } else {
+                if ($this->userModel->findUserByEmail($data['email'])) {
+                    $data['email_err'] = 'This email address already registered';
+                }
             }
 
             if (empty($data['password'])) {
@@ -50,7 +55,16 @@ class Users extends Controller
 
             //to be sure there is no any error
             if (empty($data['name_err']) && empty($data['email_err']) && empty($data['password_err']) && empty($data['confirm_password_err'])) {
-                die('Valid');
+                //hashing the password
+                $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+
+                //register from models->user_error
+                if ($this->userModel->register($data)) {
+                    flash('register_success', 'Your registration is completed, now please login');
+                    redirect('users/login');
+                } else {
+                    die('Something went wrong dude');
+                }
             } else {
                 $this->view('users/register', $data);
             };
@@ -95,9 +109,24 @@ class Users extends Controller
                 $data['password_err'] = 'Please enter a password with atleast 6 characters';
             }
 
+            //check correct user
+            if ($this->userModel->findUserByEmail($data['email'])) {
+                //user found
+            } else {
+                $data['email_err'] = 'There is no any user with this email address';
+            }
+
             //to be sure there is no any error
             if (empty($data['email_err']) && empty($data['password_err'])) {
-                die('Valid');
+                $validUser = $this->userModel->login($data['email'], $data['password']);
+                if ($validUser) {
+                    //Creating a session
+                    $this->createUserSession($validUser);
+                } else {
+                    $data['password_err'] = 'Incorrect Password (:';
+
+                    $this->view('users/login', $data);
+                }
             } else {
                 $this->view('users/login', $data);
             };
@@ -111,6 +140,36 @@ class Users extends Controller
             ];
             //load view
             $this->view('users/login', $data);
+        }
+    }
+
+    public function createUserSession($user)
+    {
+        $_SESSION['user_id'] = $user->id;
+        $_SESSION['user_email'] = $user->email;
+        $_SESSION['user_name'] = $user->name;
+
+        redirect('pages/index');
+    }
+
+    //llog out
+    public function logout()
+    {
+        unset($_SESSION['user_id']);
+        unset($_SESSION['user_email']);
+        unset($_SESSION['user_name']);
+
+        session_destroy();
+
+        redirect('users/login');
+    }
+
+    public function isLogedIn()
+    {
+        if (isset($_SESSION['user_id'])) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
