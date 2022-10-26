@@ -13,7 +13,7 @@ class User
     //register
     public function register($data)
     {
-        $this->db->query('INSERT INTO users (name, email, password) VALUE (:name, :email, :password)');
+        $this->db->query('INSERT INTO users (name, email, password) VALUES (:name, :email, :password)');
 
         $this->db->bind(':email', $data['email']);
         $this->db->bind(':name', $data['name']);

@@ -8,6 +8,11 @@ class Pages extends Controller
 
     public function index()
     {
+
+        if (isLogedIn()) {
+            redirect('posts');
+        }
+
         $data = [
             'title' => 'Welcome to Home',
             'description' => 'VATICAN CITY (Reuters) - President French Emmanuel Macron and Pope Francis had nearly an hour of private talks, likely focusing on the war in Ukraine and the countrys prospects for peace.'
